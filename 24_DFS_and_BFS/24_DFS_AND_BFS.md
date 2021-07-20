@@ -1,8 +1,18 @@
-# [7562. 나이트의 이동](https://www.acmicpc.net/problem/7562)
+
+
+# 24_DFS_AND_BFS
+
+## 목차
+
+### [1. 7562. 나이트의 이동](#7562. 나이트의 이동)
+
+### [2. 2667. 단지 번호 붙이기](#2667. 단지 번호 붙이기)
 
 
 
-## 풀이 코드
+## [7562. 나이트의 이동](https://www.acmicpc.net/problem/7562)
+
+### 풀이 코드
 
 ```python
 from collections import deque
@@ -53,7 +63,7 @@ for t in range(T):
 
 
 
-## 주절주절
+### 주절주절
 
 * 기본적으로 BFS 알고리즘을 사용했습니다.
 
@@ -79,6 +89,103 @@ for t in range(T):
 
     정말 많은... 시간이 걸렸던 것 같습니다. 그래도 빠르게 기억해낸 저 자신에게 칭찬을 한번 해주었습니다.
 
-    
 
+
+
+
+
+## [2667. 단지 번호 붙이기](https://www.acmicpc.net/problem/2667)
+
+### 풀이 코드
+
+```python
+from typing import List, Tuple
+
+def dfs(i, j):
+    global number
+    apartments[i][j] = "0"
     
+    for k in range(4):
+        next_i: int = i + dirs[k][0]
+        next_j: int = j + dirs[k][1]
+        if (0 <= next_i < N) and (0 <= next_j < N) and apartments[next_i][next_j] == "1":
+            number += 1
+            dfs(next_i, next_j)
+
+
+N: int = int(input())
+apartments: List[str] = [list(input()) for _ in range(N)]
+
+dirs: Tuple[Tuple[int]] = ((0, 1), (1, 0), (0, -1), (-1, 0))
+result: List[int] = [0] # 각 단지의 수를 저장하기 위한 List 입니다.
+
+for i in range(N):
+    for j in range(N):
+        if apartments[i][j] != "0":
+            number: int = 1
+            dfs(i, j)
+            result.append(number)
+
+result = sorted(result[1:])
+
+print(len(result))
+for i in range(len(result)):
+    print(result[i])
+```
+
+
+
+### 주절주절
+
+* 문제를 읽고, DFS로 풀까 BFS로 풀까 고민했습니다.
+
+    그런데, 문제 조건에서 N은 25이하의 자연수라고 나와서 최악의 경우 약 625번 재귀 호출하게 될 거고..
+
+    괜찮겠다! 라고 생각해서 충동적으로 DFS로 풀었습니다.
+
+    사실 뭐.. 이전에 BFS로 풀었으니 이번엔 재귀를 이용한 DFS도 해보고 싶었어요.
+
+* 기록을 보니 예전에는 반복문을 이용한 DFS로 헀었네요...
+
+    그 외에는 정말 놀랍게도 하나도 변하지 않았습니다.
+
+    ```python
+    def dfs(cur_x, cur_y):
+        stack = [[cur_x, cur_y]]
+        temp_total = 0
+        num_list[cur_x][cur_y] = 0
+    
+        while stack:
+            temp_total += 1
+            cur_x, cur_y = stack.pop()
+            for i in range(4):
+                temp_x = cur_x + dir_list[i][0]
+                temp_y = cur_y + dir_list[i][1]
+                if 0 <= temp_x < N and 0 <= temp_y < N and num_list[temp_x][temp_y] == 1:
+                    stack.append((temp_x, temp_y))
+                    num_list[temp_x][temp_y] = 0
+    
+        return temp_total
+    
+    
+    N = int(input())
+    num_list = [list(map(int, list(input()))) for _ in range(N)]
+    dir_list = ((1, 0), (0, 1), (-1, 0), (0, -1))
+    total = []
+    for i in range(N):
+        for j in range(N):
+            if num_list[i][j]:
+                temp_total = dfs(i, j)
+                total.append(temp_total)
+    
+    total.sort()
+    length = len(total)
+    
+    print(length)
+    for i in range(length):
+        print(total[i])
+    ```
+
+* 그런데 저는 왜 굳이 result에 초기값 0을 넣어놓고 나중에 제외시켰을까요?
+
+    아마도 단지 번호랑 단지 수를 일치시키려고 한 것 같은데... 문제를 안 읽고 문제를 풀면 이렇게 됩니다.
