@@ -83,3 +83,100 @@ for i in range(V):
 
 * 요즘 잠을 잘 못자서 오늘도 회사에 지각을 했는데, 내일은 지각을 안 하길 기도해봅니다...
 
+
+
+### 두 번쨰 틀린 코드...
+
+```python
+from typing import List, Tuple, Dict
+
+def find_min(visited: List[bool], min_dis_list: List[int]) -> Tuple[int]:
+    min_dis: int = 200000
+    min_node: int = -1
+
+    for i in range(V):
+        if not visited[i] and min_dis > min_dis_list[i]:
+            min_dis = min_dis_list[i]
+            min_node = i
+
+    return min_dis, min_node
+
+
+def dijkstra() -> List[int]:
+    min_dis_list: List[int] = [200000] * V
+    min_dis_list[start_node - 1] = 0
+
+    visited: List[bool] = [False] * V
+
+    while True:
+        min_dis, min_node = find_min(visited, min_dis_list)
+
+        if min_dis == 200000:
+            break
+
+        visited[min_node] = True
+
+        for i in range(V):
+            if (not visited[i]) and (i+1 in edges.get(min_node+1, [])):
+                if min_dis_list[i] > min_dis_list[min_node] + edges[min_node+1][i+1]:
+                    min_dis_list[i] = min_dis_list[min_node] + edges[min_node+1][i+1]
+
+    return min_dis_list
+
+
+V, E = map(int, input().split())
+start_node: int = int(input())
+
+edges: Dict[Dict[int]] = dict()
+
+for _ in range(E):
+    start, end, dis = map(int, input().split())
+    if start not in edges:
+        edges[start] = dict()
+    edges[start][end] = dis
+
+min_dis_list = dijkstra()
+
+for i in range(V):
+    print(min_dis_list[i] if min_dis_list[i] != 200000 else "INF")
+```
+
+
+
+### 주절주절
+
+* 메모리 초과를 해결하고자 딕셔너리를 사용해봤습니다...
+
+* 딕셔너리는 다음과 같은 형태입니다.
+
+    ```json
+    {
+     start1: {
+        end1: dis1,
+        end2: dis2,
+        end3: dis3},
+     start2: {
+        end4: dis4,
+        end5: dis5}
+     }
+    ```
+
+* 이를 통해 가중치를 저장한 공간 복잡도가 O(V<sup>2</sup>)에서 O(E)로 줄어들었습니다
+
+    (이 문제에선 최악의 경우 4억 > 30만으로 줄어들었네요..)
+
+* 이제 메모리 초과는 안되겠지? 하면서 싱글벙글 제출을 했는데 시간 초과가 떴습니다...
+
+    잘 보니 `dijkstra`함수 내의 반복문으로 인해 시간 복잡도가 O(V<sup>2</sup>)이네요...
+
+    시간제한이 1초인데... 대략 계산하면 4억번의 계산이 들어가고.... 실패겠네요
+
+    다익스트라를 힙으로 구현하면 `O(VlogV)`로 줄일 수 있으니 그걸로 구현을 해야될 것 같습니다.
+
+* 근데 아쉽게도 제가 힙을 거의 다 까먹었군요! 공부하고 돌아오겠습니다...
+
+* 이틀 연속으로 실패한 코드만 올리니 조금 그렇긴 하지만
+
+    어쩌겠어요 이런 날도 있고 저런 날도 있는거죠.
+
+* 내일은 만만한 문제로 찾아오겠습니다...
